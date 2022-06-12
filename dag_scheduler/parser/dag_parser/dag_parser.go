@@ -1,29 +1,28 @@
-package dagParser
+package dagparser
 
 import(
-  "encoding/json";
-  "fl/dagScheduler/dagError"
+  "fl/dag_scheduler/dag_error"
   "strings"
   "fmt"
 )
 
 
-func Parse(dag string) (error) {
-  var dagMap map[string]DagTask
-  ok := json.Unmarshal([]byte(dag), &dagMap)
-  if ok != nil {
-    return &dagError.DagError{Code: 10000}
-  }
-
+func Parse(dagMap map[string]DagTask) ([]TaskParsered, error) {
+  var tasksParsed []TaskParsered
   tasksDepandentMap, inDegreeMap, error := findTasksDepandent(dagMap)
   if error != nil {
-    return error
+    return tasksParsed, error
   }
-  loopE := checkLoop(inDegreeMap, tasksDepandentMap)
+  orderedTasks, loopE := checkLoop(inDegreeMap, tasksDepandentMap)
   if loopE != nil {
-    return loopE
+    return tasksParsed, loopE
   }
-  return nil
+  tasksParsed = buildTaskParsered(
+      orderedTasks,
+      tasksDepandentMap,
+      dagMap,
+  )
+  return tasksParsed, nil
 }
 
 
@@ -32,7 +31,7 @@ func parseTaskDepandent(value string) (string, string, error) {
   rets := strings.Split(value, ".")
   if (len(rets) != 2){
     return "", "", &dagError.DagError{
-        Code: 11000,
+        Code: 11010,
         Msg: fmt.Sprintf(
             "error dagparser (%v ; required task.tag; task and tag can't contain '.')",
             value,
@@ -56,16 +55,25 @@ func findTasksDepandent(
 
   // build depandents
   for taskName, taskInfo := range dagTaskMap {
+    if taskInfo.Cmd == "" {
+      return tasksDepandentMap, inDegreeMap, &dagError.DagError{
+          Code: 11040,
+          Msg: fmt.Sprintf(
+              "parser error( task %v's cmd is required )",
+              taskName,
+          ),
+      }
+    }
     input := taskInfo.Input
     for _, inputItem := range input {
-      upTaskName, _, error := parseTaskDepandent(inputItem)
+      upTaskName, upTag, error := parseTaskDepandent(inputItem)
       if error != nil {
         return tasksDepandentMap, inDegreeMap, error
       }
       _, inputOk := tasksDepandentMap[upTaskName]
       if !inputOk {
         return tasksDepandentMap, inDegreeMap, &dagError.DagError{
-            Code: 11010,
+            Code: 11020,
             Msg: fmt.Sprintf(
                 "parser error( %v; task %v not exits )",
                 inputItem,
@@ -73,7 +81,12 @@ func findTasksDepandent(
             ),
         }
       }
-      tasksDepandentMap[taskName].Up = append(tasksDepandentMap[taskName].Up, upTaskName)
+      tasksDepandentMap[taskName].Up = append(
+        tasksDepandentMap[taskName].Up,
+        TaskInput {
+          UpTask: upTaskName,
+          Tag: upTag,
+        })
       tasksDepandentMap[upTaskName].Down = append(tasksDepandentMap[upTaskName].Down, taskName)
     }
   }
@@ -84,8 +97,8 @@ func findTasksDepandent(
 }
 
 
-func checkLoop(inDegreeMap map[string]int, tasksDepandentMap map[string]*TaskDepandent) error {
-  queue := make([]string, 0)
+func checkLoop(inDegreeMap map[string]int, tasksDepandentMap map[string]*TaskDepandent) ([]string, error) {
+  var queue, orderedTasks []string
   for taskName, inDegree := range inDegreeMap {
     if (inDegree == 0) {
       queue = append(queue, taskName)
@@ -96,6 +109,7 @@ func checkLoop(inDegreeMap map[string]int, tasksDepandentMap map[string]*TaskDep
   // TODO: order of task
   for (qLength > 0) {
     taskName := queue[0]
+    orderedTasks = append(orderedTasks, taskName)
     queue = queue[1:]
     totals ++
     qLength --
@@ -109,9 +123,30 @@ func checkLoop(inDegreeMap map[string]int, tasksDepandentMap map[string]*TaskDep
   }
   if (totals != len(tasksDepandentMap)){
     // TODO: find loop
-    return &dagError.DagError{
-        Code: 11020,
+    return orderedTasks, &dagError.DagError{
+        Code: 11030,
     }
   }
-  return nil
+  return orderedTasks, nil
+}
+
+
+func buildTaskParsered(
+    orderedTasks []string,
+    tasksDepandentMap map[string]*TaskDepandent,
+    dagTaskMap map[string]DagTask,
+) []TaskParsered {
+    var tasksParsed []TaskParsered
+    for _, taskName := range orderedTasks {
+      tasksParsed = append(
+        tasksParsed,
+        TaskParsered {
+          Name: taskName,
+          Depandent: tasksDepandentMap[taskName],
+          Output: dagTaskMap[taskName].Output,
+          Cmd: dagTaskMap[taskName].Cmd,
+        },
+      )
+    }
+    return tasksParsed
 }
