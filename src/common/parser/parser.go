@@ -3,9 +3,9 @@ package parser
 import (
   "fmt"
   "encoding/json"
-  "fl/dag_scheduler/dag_error"
-  "fl/dag_scheduler/parser/dag_parser"
-  "fl/dag_scheduler/parser/parameter_parser"
+  "fl/common/dag_error"
+  "fl/common/parser/dag_parser"
+  "fl/common/parser/parameter_parser"
 )
 
 

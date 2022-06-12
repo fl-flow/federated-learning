@@ -1,9 +1,9 @@
 package dagparser
 
 import(
-  "fl/dag_scheduler/dag_error"
-  "strings"
   "fmt"
+  "strings"
+  "fl/common/dag_error"
 )
 
 
