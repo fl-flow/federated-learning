@@ -4,8 +4,8 @@ import (
   "fmt"
   "testing"
   "encoding/json"
-  "fl/common/dag_error"
-  "fl/common/parser/parameter_parser"
+  "dag/common/dag_error"
+  "dag/common/parser/parameter_parser"
 )
 
 
@@ -13,7 +13,7 @@ func testParse(rawParameter string) (parameterparser.Parameter, error){
   var parameter parameterparser.Parameter
   ok := json.Unmarshal([]byte(rawParameter), &parameter)
   if ok != nil {
-    return parameter, &dagError.DagError{Code: 12000}
+    return parameter, &dagerror.DagError{Code: 12000}
   }
   parameter1, ok1 := parameterparser.Parse(parameter)
   if ok1 != nil {

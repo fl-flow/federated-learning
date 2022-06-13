@@ -1,4 +1,4 @@
-package dagError
+package dagerror
 
 
 var Conf = map[int]string {
@@ -15,4 +15,8 @@ var Conf = map[int]string {
   12000: "parameter parser error", // base
   12010: "num of parameter is not equal to num of dag",
   12020: "num of parameter is not equal to num of dag",
+
+  110000: "job http api error", // base
+  110010: "job http api error (no tasks)",
+
 }

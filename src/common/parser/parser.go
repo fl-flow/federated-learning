@@ -2,25 +2,19 @@ package parser
 
 import (
   "fmt"
-  "encoding/json"
-  "fl/common/dag_error"
-  "fl/common/parser/dag_parser"
-  "fl/common/parser/parameter_parser"
+  "dag/common/dag_error"
+  "dag/common/parser/dag_parser"
+  "dag/common/parser/parameter_parser"
 )
 
 
-func Parse(rawConf string) ([]dagparser.TaskParsered, parameterparser.Parameter, error){
-  var conf Conf
+func Parse(conf Conf) ([]dagparser.TaskParsered, parameterparser.Parameter, error){
   var tasks []dagparser.TaskParsered
   var parameters parameterparser.Parameter
-  ok := json.Unmarshal([]byte(rawConf), &conf)
-  if ok != nil {
-    return tasks, parameters, &dagError.DagError{Code: 10000}
-  }
 
-  tasks, dagError := dagparser.Parse(conf.Dag)
-  if dagError != nil {
-    return tasks, parameters, dagError
+  tasks, dagerror := dagparser.Parse(conf.Dag)
+  if dagerror != nil {
+    return tasks, parameters, dagerror
   }
   parameters, parameterError := parameterparser.Parse(conf.Parameter)
   if parameterError != nil {
@@ -38,12 +32,12 @@ func checkDagParameter(
   tasks []dagparser.TaskParsered,
   parameters parameterparser.Parameter) error {
   if len(tasks) != len(parameters.Tasks) {
-    return &dagError.DagError{Code: 12010}
+    return &dagerror.DagError{Code: 12010}
   }
   for _, task := range tasks {
     _, ok := parameters.Tasks[task.Name]
     if !ok {
-      return &dagError.DagError{
+      return &dagerror.DagError{
         Code: 12020,
         Msg: fmt.Sprintf(
             "dag's task %v is not in parameters",

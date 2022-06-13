@@ -3,7 +3,7 @@ package dagparser
 import(
   "fmt"
   "strings"
-  "fl/common/dag_error"
+  "dag/common/dag_error"
 )
 
 
@@ -30,7 +30,7 @@ func parseTaskDepandent(value string) (string, string, error) {
   // task.tag
   rets := strings.Split(value, ".")
   if (len(rets) != 2){
-    return "", "", &dagError.DagError{
+    return "", "", &dagerror.DagError{
         Code: 11010,
         Msg: fmt.Sprintf(
             "error dagparser (%v ; required task.tag; task and tag can't contain '.')",
@@ -56,7 +56,7 @@ func findTasksDepandent(
   // build depandents
   for taskName, taskInfo := range dagTaskMap {
     if taskInfo.Cmd == "" {
-      return tasksDepandentMap, inDegreeMap, &dagError.DagError{
+      return tasksDepandentMap, inDegreeMap, &dagerror.DagError{
           Code: 11040,
           Msg: fmt.Sprintf(
               "parser error( task %v's cmd is required )",
@@ -72,7 +72,7 @@ func findTasksDepandent(
       }
       _, inputOk := tasksDepandentMap[upTaskName]
       if !inputOk {
-        return tasksDepandentMap, inDegreeMap, &dagError.DagError{
+        return tasksDepandentMap, inDegreeMap, &dagerror.DagError{
             Code: 11020,
             Msg: fmt.Sprintf(
                 "parser error( %v; task %v not exits )",
@@ -123,7 +123,7 @@ func checkLoop(inDegreeMap map[string]int, tasksDepandentMap map[string]*TaskDep
   }
   if (totals != len(tasksDepandentMap)){
     // TODO: find loop
-    return orderedTasks, &dagError.DagError{
+    return orderedTasks, &dagerror.DagError{
         Code: 11030,
     }
   }
@@ -142,9 +142,10 @@ func buildTaskParsered(
         tasksParsed,
         TaskParsered {
           Name: taskName,
-          Depandent: tasksDepandentMap[taskName],
+          Depandent: *(tasksDepandentMap[taskName]),
           Output: dagTaskMap[taskName].Output,
           Cmd: dagTaskMap[taskName].Cmd,
+          ValidateCmd: dagTaskMap[taskName].ValidateCmd,
         },
       )
     }

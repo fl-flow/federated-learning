@@ -1,4 +1,4 @@
-package dagError
+package dagerror
 
 import (
   "fmt"

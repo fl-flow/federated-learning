@@ -1,8 +1,8 @@
 package parser
 
 import (
-  "fl/common/parser/dag_parser"
-  "fl/common/parser/parameter_parser"
+  "dag/common/parser/dag_parser"
+  "dag/common/parser/parameter_parser"
 )
 
 type Conf struct {

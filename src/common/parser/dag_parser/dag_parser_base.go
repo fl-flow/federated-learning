@@ -5,6 +5,7 @@ type DagTask struct {
   Input       []string  `json:"input"`
   Output      []string  `json:"output"`
   Cmd         string    `json:"cmd"`
+  ValidateCmd string    `json:"validate_cmd"`
 }
 
 
@@ -22,7 +23,8 @@ type TaskDepandent struct {
 
 type TaskParsered struct {
   Name          string
-  Depandent     *TaskDepandent
+  Depandent     TaskDepandent
   Output        []string
   Cmd           string
+  ValidateCmd   string
 }

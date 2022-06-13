@@ -2,8 +2,8 @@ package dagparser
 
 import(
   "encoding/json"
-  "fl/common/dag_error"
-  "fl/common/parser/dag_parser"
+  "dag/common/dag_error"
+  "dag/common/parser/dag_parser"
   "testing"
   "fmt"
 )
@@ -14,7 +14,7 @@ func testParse(dag string) ([]dagparser.TaskParsered, error) {
   ok := json.Unmarshal([]byte(dag), &dagMap)
   var tasksParsed []dagparser.TaskParsered
   if ok != nil {
-    return tasksParsed, &dagError.DagError{Code: 11000}
+    return tasksParsed, &dagerror.DagError{Code: 11000}
   }
   tasksParsed, e := dagparser.Parse(dagMap)
   if e != nil {

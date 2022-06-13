@@ -1,4 +1,4 @@
-package flrpc
+package dagrpc
 
 import (
   "log"
@@ -6,7 +6,7 @@ import (
   "net/rpc"
   "net/rpc/jsonrpc"
 
-  "fl/rpc/methods/task"
+  "dag/rpc/methods/task"
 )
 
 

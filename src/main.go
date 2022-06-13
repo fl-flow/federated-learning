@@ -1,10 +1,11 @@
 package main
 
 import (
-  "fl/rpc"
+  _ "dag/common/db"
+  "dag/http_server"
 )
 
 
 func main() {
-  flrpc.RunRpc()
+  httpserver.Run()
 }
