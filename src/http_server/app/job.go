@@ -2,22 +2,26 @@ package app
 
 import (
   "fmt"
-  "net/http"
+
   "github.com/gin-gonic/gin"
 
   "dag/common/parser"
   "dag/http_server/form"
   "dag/http_server/controller"
+  "dag/http_server/http/response"
 )
 
 
 func JobCreate(context *gin.Context) {
   f := form.JobCreateForm{}
 	if e := context.ShouldBindJSON(&f); e != nil {
-		// id = article.Insert()
-    fmt.Println(e)
-    context.JSON(http.StatusBadRequest, gin.H{})
-    return // TODO:
+    response.R(
+      context,
+      100,
+      fmt.Sprintf("%v", e),
+      fmt.Sprintf("%v", e),
+    )
+    return
 	}
   error := controller.JobCreate(
     f.Name,
@@ -26,6 +30,14 @@ func JobCreate(context *gin.Context) {
       Parameter: f.Parameter,
     },
   )
-  fmt.Println(error, "asdasd")
-  context.JSON(http.StatusOK, gin.H{})
+  if error != nil {
+    response.R(
+      context,
+      error.Code,
+      error.Message(),
+      error.Message(),
+    )
+    return
+  }
+  response.R(context, 0, "success", "success")
 }

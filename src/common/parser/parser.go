@@ -8,7 +8,7 @@ import (
 )
 
 
-func Parse(conf Conf) ([]dagparser.TaskParsered, parameterparser.Parameter, error){
+func Parse(conf Conf) ([]dagparser.TaskParsered, parameterparser.Parameter, *dagerror.DagError){
   var tasks []dagparser.TaskParsered
   var parameters parameterparser.Parameter
 
@@ -30,7 +30,7 @@ func Parse(conf Conf) ([]dagparser.TaskParsered, parameterparser.Parameter, erro
 
 func checkDagParameter(
   tasks []dagparser.TaskParsered,
-  parameters parameterparser.Parameter) error {
+  parameters parameterparser.Parameter) *dagerror.DagError {
   if len(tasks) != len(parameters.Tasks) {
     return &dagerror.DagError{Code: 12010}
   }

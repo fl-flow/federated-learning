@@ -6,13 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	_ "dag/docs"
 
+	_ "dag/docs"
 	"dag/http_server/app"
+	"dag/http_server/http/middleware"
 )
 
 func Run() {
 	ginApp := gin.Default()
+	ginApp.Use(middleware.AuthMiddleware)
 	ginApp.GET("/version", func(c *gin.Context) {
     c.String(http.StatusOK, "1.0.0")
   })

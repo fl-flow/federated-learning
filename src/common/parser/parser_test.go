@@ -5,11 +5,12 @@ import (
   "testing"
   "encoding/json"
   "dag/common/dag_error"
+  "dag/common/parser/dag_parser"
   "dag/common/parser/parameter_parser"
 )
 
 
-func testParse(rawConf string) ([]dagparser.TaskParsered, parameterparser.Parameter, error){
+func testParse(rawConf string) ([]dagparser.TaskParsered, parameterparser.Parameter, *dagerror.DagError){
   var conf Conf
   var tasks []dagparser.TaskParsered
   var parameters parameterparser.Parameter

@@ -5,17 +5,16 @@ import (
   "testing"
   "encoding/json"
   "dag/common/dag_error"
-  "dag/common/parser/parameter_parser"
 )
 
 
-func testParse(rawParameter string) (parameterparser.Parameter, error){
-  var parameter parameterparser.Parameter
+func testParse(rawParameter string) (Parameter, *dagerror.DagError){
+  var parameter Parameter
   ok := json.Unmarshal([]byte(rawParameter), &parameter)
   if ok != nil {
     return parameter, &dagerror.DagError{Code: 12000}
   }
-  parameter1, ok1 := parameterparser.Parse(parameter)
+  parameter1, ok1 := Parse(parameter)
   if ok1 != nil {
     return parameter, ok1
   }

@@ -8,7 +8,7 @@ import (
 )
 
 
-func JobCreate(name string, conf parser.Conf) error {
+func JobCreate(name string, conf parser.Conf) *dagerror.DagError {
   // parse conf
   orderedTasks, _, error := parser.Parse(conf)
   if error != nil {
