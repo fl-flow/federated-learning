@@ -27,9 +27,15 @@ func (e *Error) Error() string {
 }
 
 
-func (e *Error) Message() interface{} {
+func (e *Error) Message() map[string]interface{} {
+  var msg string
+  if(e.Msg==""){
+    msg = Conf[e.Code]
+  } else {
+    msg = e.Msg
+  }
   return map[string]interface{} {
-    "message": Conf[e.Code],
+    "message": msg,
     "hits": e.Hits,
   }
 }

@@ -8,14 +8,8 @@ var RoleList = []string {
 }
 
 
-type Parameter struct {
-  Common        string          `json:"common"`
-  Tasks         interface {}    `json:"tasks"`
-}
-
-
 type DagConf struct {
-  Name          string          `json:"name"`
-  Dag           interface {}    `json:"dag"`
-  Parameter     interface {}    `json:"parameter"`
+  Name          string              `json:"name"`
+  Dag           interface {}        `json:"dag"`
+  Parameter     interface {}        `json:"parameter"`
 }

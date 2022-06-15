@@ -1,7 +1,7 @@
 package jobcontroller
 
 import (
-  "fmt"
+  "github.com/fl-flow/dag-scheduler/dag_scheduler_client"
 
   "fl/http_server/form"
   "fl/common/error"
@@ -9,10 +9,18 @@ import (
 
 
 func JobCreate(f form.JobCreateForm) *error.Error {
-  jobConfs, e := FederationParse(f)
+  jobConf, e := FederationParse(f)
   if e != nil {
     return e
   }
-  fmt.Println(jobConfs, "jobConfs")
+  _, clientE := dagschedulerclient.CreateJob(jobConf)
+  if clientE != nil {
+    errorMessage := clientE.Message()
+    return &error.Error{
+      Code: clientE.Code,
+      Msg: errorMessage["message"].(string),
+      Hits: errorMessage["hits"].(string),
+    }
+  }
   return nil
 }

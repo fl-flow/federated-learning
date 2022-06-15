@@ -6,24 +6,24 @@ import (
 )
 
 
-func FederationParse(f form.JobCreateForm) ([]DagConf, *error.Error) {
-  var dagConfs []DagConf
+func FederationParse(f form.JobCreateForm) (DagConf, *error.Error) {
+  var dagConf DagConf
 
   roleDag := f.RoleDag
-  roleParameter := f.Parameter.RoleParameter
+  roleParameter := f.Parameter
 
   dagRoles, e := getRoles(roleDag)
   if e != nil {
-    return dagConfs, e
+    return dagConf, e
   }
   parameterRoles, pe := getRoles(roleParameter)
   if pe != nil {
-    return dagConfs, pe
+    return dagConf, pe
   }
   for _, pRole := range parameterRoles{
     has := inArray(pRole, dagRoles)
     if !has {
-      return dagConfs, &error.Error{
+      return dagConf, &error.Error{
               Code: 101020,
               Hits: pRole,
           }
@@ -62,23 +62,10 @@ func getRoles(roleValueMap map[string]interface{}) ([]string, *error.Error) {
 }
 
 
-func buildDagConf(f form.JobCreateForm) []DagConf {
-  var dagConfs []DagConf
-  name := f.Name
-  roleDag := f.RoleDag
-  commonParameter := f.Parameter.Common
-  roleParameter := f.Parameter.RoleParameter
-  for role, dag := range roleDag {
-    parameter := Parameter {
-      Common: commonParameter,
-      Tasks: roleParameter[role],
-    }
-    dagConf := DagConf {
-      Name: name + role,
-      Dag: dag,
-      Parameter: parameter,
-    }
-    dagConfs = append(dagConfs, dagConf)
+func buildDagConf(f form.JobCreateForm) DagConf {
+  return DagConf {
+    Name: f.Name,
+    Dag: f.RoleDag,
+    Parameter: f.Parameter,
   }
-  return dagConfs
 }
