@@ -10,7 +10,7 @@ func FederationParse(f form.JobCreateForm) (DagConf, *error.Error) {
   var dagConf DagConf
 
   roleDag := f.RoleDag
-  roleParameter := f.Parameter
+  roleParameter := f.Parameter.RoleParameter
 
   dagRoles, e := getRoles(roleDag)
   if e != nil {
@@ -45,7 +45,7 @@ func inArray(item string, array []string) bool {
 }
 
 
-func getRoles(roleValueMap map[string]interface{}) ([]string, *error.Error) {
+func getRoles(roleValueMap map[string]form.Kv) ([]string, *error.Error) {
   var roles []string
   for role, _ := range roleValueMap {
     has := inArray(role, RoleList)
@@ -63,9 +63,15 @@ func getRoles(roleValueMap map[string]interface{}) ([]string, *error.Error) {
 
 
 func buildDagConf(f form.JobCreateForm) DagConf {
+  RoleParameter := make(map[string](map[string]interface{}))
+  for role, v := range f.Parameter.RoleParameter {
+    RoleParameter[role] = map[string]interface{}{}
+    RoleParameter[role]["tasks"] = v
+    RoleParameter[role]["common"] = f.Parameter.Common
+  }
   return DagConf {
     Name: f.Name,
     Dag: f.RoleDag,
-    Parameter: f.Parameter,
+    Parameter: RoleParameter,
   }
 }

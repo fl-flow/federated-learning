@@ -21,7 +21,7 @@ func Run() {
 	ginApp.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	ginApp.POST("/v1/job/", app.JobCreate)
-
+	ginApp.GET("/v1/job/", app.JobList)
 
 	log.Println("Server is running....")
 	ginApp.Run(":8443")
