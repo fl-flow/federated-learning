@@ -5,9 +5,9 @@ import (
   "github.com/gin-gonic/gin"
   "github.com/fl-flow/dag-scheduler/dag_scheduler_client"
 
-  "fl/http_server/form"
+  "fl/http_server/v1/form"
   "fl/http_server/http/response"
-  "fl/http_server/controller/job"
+  "fl/http_server/v1/controller/job"
   "fl/http_server/http/reverse_proxy"
 )
 
