@@ -18,7 +18,7 @@ func Run(ip string, port int) {
 
 	ginApp.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	v1.RegisterRouter(ginApp.Group("v1"))
+	v1.RegisterRouter(ginApp.Group("/api/v1"))
 
 	ginApp.Run(fmt.Sprintf("%v:%d", ip, port))
 }

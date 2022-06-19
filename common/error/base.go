@@ -37,5 +37,6 @@ func (e *Error) Message() map[string]interface{} {
   return map[string]interface{} {
     "message": msg,
     "hits": e.Hits,
+    "code": e.Code,
   }
 }
