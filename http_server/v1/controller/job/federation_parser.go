@@ -1,6 +1,7 @@
 package jobcontroller
 
 import (
+  "reflect"
   "fl/common/error"
   "fl/http_server/v1/form"
 )
@@ -12,11 +13,11 @@ func FederationParse(f form.JobCreateForm) (DagConf, *error.Error) {
   roleDag := f.RoleDag
   roleParameter := f.Parameter.RoleParameter
 
-  dagRoles, e := getRoles(roleDag)
+  dagRoles, e := getRoles(reflect.ValueOf(roleDag).MapKeys())
   if e != nil {
     return dagConf, e
   }
-  parameterRoles, pe := getRoles(roleParameter)
+  parameterRoles, pe := getRoles(reflect.ValueOf(roleParameter).MapKeys())
   if pe != nil {
     return dagConf, pe
   }
@@ -45,9 +46,10 @@ func inArray(item string, array []string) bool {
 }
 
 
-func getRoles(roleValueMap map[string]form.Kv) ([]string, *error.Error) {
+func getRoles(roless []reflect.Value) ([]string, *error.Error) {
   var roles []string
-  for role, _ := range roleValueMap {
+  for _, role_ := range roless {
+    role := string(role_.String())
     has := inArray(role, RoleList)
     if has {
       roles = append(roles, role)

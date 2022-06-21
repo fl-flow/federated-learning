@@ -7,7 +7,7 @@ type Kv map[string]interface{}
 
 
 type RoleParameter struct {
-  RoleParameter   map[string]Kv           `json:"role_parameter" binding:"required"`
+  RoleParameter   map[string]interface{}  `json:"role_parameter" binding:"required"`
   Common          string                  `json:"common" binding:"required"`
 }
 

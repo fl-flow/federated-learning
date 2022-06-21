@@ -1,6 +1,8 @@
 package jobcontroller
 
 import (
+  "fmt"
+  "log"
   "fl/common/error"
   "fl/http_server/v1/form"
 )
@@ -18,7 +20,7 @@ func PartyParse (
       Name: f.Name,
       Parameter: form.RoleParameter{
         Common: common,
-        RoleParameter: make(map[string]form.Kv),
+        RoleParameter: make(map[string]interface{}),
       },
       RoleDag: make(map[string]form.Kv),
     }
@@ -36,7 +38,11 @@ func PartyParse (
             }
       }
       jcf.RoleDag[r] = f.RoleDag[r]
-      jcf.Parameter.RoleParameter[r] = f.Parameter.RoleParameter[r]
+      p, e := processParameter(f.Parameter.RoleParameter[r], party)
+      if e != nil {
+        return party2Form, e
+      }
+      jcf.Parameter.RoleParameter[r] = p
     }
     party2Form[party] = jcf
   }
@@ -58,4 +64,52 @@ func transferRole2PartToParty2RoleMap(
     }
   }
   return party2RoleMap
+}
+
+
+func processParameter(parameter interface{}, party string) (interface{}, *error.Error) {
+  switch parameter.(type) {
+    case map[string]interface{}:
+      return parameter, nil
+    case [](interface{}):
+      tmp := parameter.([]interface{})
+      for _, pParameter_ := range tmp {
+        switch pParameter_.(type) {
+          case map[string]interface{}:
+            fmt.Println(parameter)
+          default:
+            return pParameter_, &error.Error{
+              Code: 102021,
+              Hits: fmt.Sprintf("%v", pParameter_),
+            }
+        }
+        pParameter := pParameter_.(map[string]interface{})
+        p := pParameter["party"]
+        switch p.(type) {
+          case string:
+            fmt.Println(p)
+          default:
+            return pParameter, &error.Error{
+              Code: 102020,
+              Hits: fmt.Sprintf("%v", p),
+            }
+        }
+        if p.(string) == party {
+          if pParameter["data"] == nil {
+            return pParameter, &error.Error{
+              Code: 102025,
+              Hits: fmt.Sprintf("%v", p),
+            }
+          }
+          return pParameter["data"], nil
+        }
+      }
+      return parameter, &error.Error{
+        Code: 102030,
+        Hits: party,
+      }
+    default:
+      log.Fatalf("error parameter: ", parameter)
+      return parameter, nil
+  }
 }
