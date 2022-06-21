@@ -5,12 +5,6 @@ import (
   "fl/http_server/v1/form"
 )
 
-// type JobCreateForm struct {
-//   Name          string                  `json:"name" binding:"required"`
-//   RoleDag       map[string]Kv           `json:"role_dag" binding:"required"`
-//   Parameter     RoleParameter           `json:"parameter" binding:"required"`
-// }
-
 
 func PartyParse (
   role2PartyMap map[string]([]string),
@@ -47,36 +41,6 @@ func PartyParse (
     party2Form[party] = jcf
   }
   return party2Form, nil
-
-  // party2DagConf := make(map[string]DagConf)
-  // for party, roles := range party2RoleMap {
-  //   dagMap := make(map[string](interface{}))
-  //   parameterMap := make(map[string]interface{})
-  //   for _, r := range *roles {
-  //     dag := dagConf.Dag.(map[string](map[string]interface{}))
-  //     if dag[r] == nil {
-  //       return party2DagConf, &error.Error{
-  //               Code: 102010,
-  //               Hits: r,
-  //           }
-  //     }
-  //     parameter := dagConf.Parameter.(map[string](map[string]interface{}))
-  //     if parameter[r] == nil {
-  //       return party2DagConf, &error.Error{
-  //               Code: 102010,
-  //               Hits: r,
-  //           }
-  //     }
-  //     dagMap[r] = dag[r]
-  //     parameterMap[r] = parameter[r]
-  //   }
-  //   party2DagConf[party] = DagConf {
-  //     Name: dagConf.Name,
-  //     Dag: dagMap,
-  //     Parameter: parameterMap,
-  //   }
-  // }
-  // return party2DagConf, nil
 }
 
 
