@@ -7,9 +7,21 @@ import (
 
   "fl/http_server/v1/form"
   "fl/http_server/http/response"
+  "fl/http_server/http/mixin"
   "fl/http_server/v1/controller/job"
   "fl/http_server/http/reverse_proxy"
 )
+
+
+func JobSubmit(context *gin.Context) {
+  fmt.Println("asdasd")
+  var f form.JobSubmitForm
+  if ok := mixin.CheckJSON(context, &f); !ok {
+    return
+  }
+  token, er := jobcontroller.JobSubmit(f)
+  mixin.CommonResponse(context, token, er)
+}
 
 
 func JobCreate(context *gin.Context) {

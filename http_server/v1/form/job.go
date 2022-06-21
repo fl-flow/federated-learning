@@ -17,3 +17,9 @@ type JobCreateForm struct {
   RoleDag       map[string]Kv           `json:"role_dag" binding:"required"`
   Parameter     RoleParameter           `json:"parameter" binding:"required"`
 }
+
+
+type JobSubmitForm struct {
+  JobCreateForm
+  PartyMap        map[string]([]string) `json:"party_map" binding:"required"`
+}

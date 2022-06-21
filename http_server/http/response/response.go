@@ -15,3 +15,10 @@ func R(c *gin.Context, code int, msg interface{}, data interface{})  {
   }
 	c.JSON(httpStatus, gin.H{"code": code, "msg": msg, "data": data})
 }
+
+
+type Ret struct {
+  Code    int             `json:"code"`
+  Data    interface{}     `json:"data"`
+  Msg     interface{}     `json:"msg"`
+}

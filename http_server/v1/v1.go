@@ -13,6 +13,7 @@ func RegisterRouter(Router *gin.RouterGroup)  {
     c.String(http.StatusOK, "1.0.0")
   })
 
+  Router.POST("/job/submit/", app.JobSubmit)
   Router.POST("/job/", app.JobCreate)
 	Router.GET("/job/", app.JobList)
 }

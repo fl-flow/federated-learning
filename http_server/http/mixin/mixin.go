@@ -1,10 +1,11 @@
 package mixin
 
 import (
+  "fmt"
   "gorm.io/gorm"
   "github.com/gin-gonic/gin"
-
-  "github.com/fl-flow/dag-scheduler/http_server/http/response"
+  "fl/common/error"
+  "fl/http_server/http/response"
 )
 
 
@@ -49,4 +50,37 @@ func ListResponse(
       "size": size,
     },
   )
+}
+
+
+func CheckJSON(context *gin.Context, form any) bool {
+	if e := context.ShouldBindJSON(form); e != nil {
+    response.R(
+      context,
+      100,
+      fmt.Sprintf("%v", e),
+      fmt.Sprintf("%v", e),
+    )
+    return false
+	}
+	return true
+}
+
+
+func CommonResponse(context *gin.Context, res interface{}, er *error.Error) {
+	if er != nil {
+		response.R(
+			context,
+			er.Code,
+			er.Message(),
+			er.Message(),
+		)
+		return
+	}
+	response.R(
+		context,
+		0,
+		"success",
+		res,
+	)
 }
