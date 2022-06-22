@@ -7,7 +7,7 @@ import (
 )
 
 
-func FederationParse(f form.JobCreateForm) (DagConf, *error.Error) {
+func FederationParse(f form.JobCreateRawConf) (DagConf, *error.Error) {
   var dagConf DagConf
 
   roleDag := f.RoleDag
@@ -64,7 +64,7 @@ func getRoles(roless []reflect.Value) ([]string, *error.Error) {
 }
 
 
-func buildDagConf(f form.JobCreateForm) DagConf {
+func buildDagConf(f form.JobCreateRawConf) DagConf {
   RoleParameter := make(map[string](map[string]interface{}))
   for role, v := range f.Parameter.RoleParameter {
     RoleParameter[role] = map[string]interface{}{}

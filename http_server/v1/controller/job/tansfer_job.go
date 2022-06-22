@@ -4,17 +4,18 @@ import (
   "fmt"
   "log"
   "time"
+  "sync"
   "bytes"
   "net/http"
 	"io/ioutil"
   "encoding/json"
 
-  "fl/http_server/v1/form"
   "fl/http_server/http/response"
 )
 
 
-func TransferJob(ipAndPort string, f form.JobCreateForm) bool {
+func TransferJob(ipAndPort string, f interface{}, w *sync.WaitGroup) bool {
+  defer w.Done()
   url := fmt.Sprintf("http://%s%s", ipAndPort, "/api/v1/job/")
   b, e := json.Marshal(f)
   if e != nil {

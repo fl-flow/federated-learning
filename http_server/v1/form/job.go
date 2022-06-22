@@ -12,14 +12,14 @@ type RoleParameter struct {
 }
 
 
-type JobCreateForm struct {
+type JobCreateRawConf struct {
   Name          string                  `json:"name" binding:"required"`
   RoleDag       map[string]Kv           `json:"role_dag" binding:"required"`
   Parameter     RoleParameter           `json:"parameter" binding:"required"`
 }
 
 
-type JobSubmitForm struct {
-  JobCreateForm
+type JobForm struct {
+  JobCreateRawConf
   PartyMap        map[string]([]string) `json:"party_map" binding:"required"`
 }

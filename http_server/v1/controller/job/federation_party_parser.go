@@ -2,7 +2,6 @@ package jobcontroller
 
 import (
   "fmt"
-  "log"
   "fl/common/error"
   "fl/http_server/v1/form"
 )
@@ -10,13 +9,13 @@ import (
 
 func PartyParse (
   role2PartyMap map[string]([]string),
-  f form.JobSubmitForm,
-) (map[string]form.JobCreateForm, *error.Error) {
+  f form.JobForm,
+) (map[string]form.JobCreateRawConf, *error.Error) {
   party2RoleMap := transferRole2PartToParty2RoleMap(role2PartyMap)
-  party2Form := make(map[string]form.JobCreateForm)
+  party2Form := make(map[string]form.JobCreateRawConf)
   common := f.Parameter.Common
   for party, roles := range party2RoleMap {
-    jcf := form.JobCreateForm {
+    jcf := form.JobCreateRawConf {
       Name: f.Name,
       Parameter: form.RoleParameter{
         Common: common,
@@ -109,7 +108,9 @@ func processParameter(parameter interface{}, party string) (interface{}, *error.
         Hits: party,
       }
     default:
-      log.Fatalf("error parameter: ", parameter)
-      return parameter, nil
+      return parameter, &error.Error{
+        Code: 102015,
+        Hits: fmt.Sprintf("%v", parameter),
+      }
   }
 }
