@@ -2,12 +2,13 @@ package jobcontroller
 
 import (
   "reflect"
+  "encoding/json"
   "fl/common/error"
   "fl/http_server/v1/form"
 )
 
 
-func FederationParse(f form.JobCreateRawConf) (DagConf, *error.Error) {
+func FederationParse(f form.JobCreateRawConf, partyMap map[string]([]string)) (DagConf, *error.Error) {
   var dagConf DagConf
 
   roleDag := f.RoleDag
@@ -30,7 +31,7 @@ func FederationParse(f form.JobCreateRawConf) (DagConf, *error.Error) {
           }
     }
   }
-  return buildDagConf(f), nil
+  return buildDagConf(f, partyMap), nil
 }
 
 
@@ -64,12 +65,15 @@ func getRoles(roless []reflect.Value) ([]string, *error.Error) {
 }
 
 
-func buildDagConf(f form.JobCreateRawConf) DagConf {
+func buildDagConf(f form.JobCreateRawConf, partyMap map[string]([]string)) DagConf {
+  var common form.CommonParameter = f.Parameter.Common
+  common.PartyMap = partyMap
+  commonByte, _ := json.Marshal(common)
   RoleParameter := make(map[string](map[string]interface{}))
   for role, v := range f.Parameter.RoleParameter {
     RoleParameter[role] = map[string]interface{}{}
     RoleParameter[role]["tasks"] = v
-    RoleParameter[role]["common"] = f.Parameter.Common
+    RoleParameter[role]["common"] = string(commonByte)
   }
   return DagConf {
     Name: f.Name,

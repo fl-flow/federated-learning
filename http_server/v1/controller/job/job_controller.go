@@ -23,7 +23,7 @@ func JobCreate(f form.JobForm) (dagModel.Job, *error.Error) {
   }
   dagConfMap := make(map[string]DagConf)
   for party_id, partConf := range party2CreateForm {
-    dagConf, e := FederationParse(partConf)
+    dagConf, e := FederationParse(partConf, f.PartyMap)
     if e != nil {
       return dagModel.Job{}, e
     }
@@ -74,7 +74,7 @@ func JobSubmit(f form.JobForm) (form.JobForm, *error.Error) {
     return f, er
   }
   for _, partConf := range party2CreateForm {
-    _, e := FederationParse(partConf)
+    _, e := FederationParse(partConf, f.PartyMap)
     if e != nil {
       return f, e
     }

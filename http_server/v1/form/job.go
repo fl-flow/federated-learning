@@ -6,9 +6,23 @@ import ()
 type Kv map[string]interface{}
 
 
+type CommonParameter struct {
+  Communication struct {
+    Engine string `json:"engine" binding:"required"`
+  } `json:"communication" binding:"required"`
+  Storage struct {
+    Engine string `json:"engine" binding:"required"`
+  } `json:"storage" binding:"required"`
+  Computing struct {
+    Engine string `json:"engine" binding:"required"`
+  } `json:"computing" binding:"required"`
+  PartyMap map[string]([]string) `json:"party_map,omitempty" binding:"-"`
+}
+
+
 type RoleParameter struct {
   RoleParameter   map[string]interface{}  `json:"role_parameter" binding:"required"`
-  Common          string                  `json:"common" binding:"required"`
+  Common          CommonParameter         `json:"common" binding:"required"`
 }
 
 
