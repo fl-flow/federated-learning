@@ -3,7 +3,21 @@ package form
 import ()
 
 
-type Kv map[string]interface{}
+type Dag struct {
+  Input   struct {
+    Data  []string  `json:"data" binding:"required"`
+    Model []string  `json:"model" binding:"required"`
+  } `json:"input" binding:"required"`
+  Output   struct {
+    Data  []string  `json:"data" binding:"required"`
+    Model []string  `json:"model" binding:"required"`
+  } `json:"output" binding:"required"`
+  Cmd         []string  `json:"cmd" binding:"required"`
+  ValidateCmd string    `json:"validate_cmd" binding:"required"`
+}
+
+
+type Task2Dag map[string]Dag
 
 
 type CommonParameter struct {
@@ -28,7 +42,7 @@ type RoleParameter struct {
 
 type JobCreateRawConf struct {
   Name          string                  `json:"name" binding:"required"`
-  RoleDag       map[string]Kv           `json:"role_dag" binding:"required"`
+  RoleDag       map[string]Task2Dag     `json:"role_dag" binding:"required"`
   Parameter     RoleParameter           `json:"parameter" binding:"required"`
 }
 

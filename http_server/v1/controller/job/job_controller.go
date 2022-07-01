@@ -51,7 +51,7 @@ func JobCreate(f form.JobForm) (dagModel.Job, *error.Error) {
   db.DataBase.Create(&j)
   var insertingTasks []model.Task
   for party_id, dagConf := range dagConfMap {
-    for role, tasks := range dagConf.Dag.(map[string](form.Kv)) {
+    for role, tasks := range dagConf.Dag {
       for t, _ := range tasks {
         insertingTasks = append(insertingTasks, model.Task{
           Job: j,

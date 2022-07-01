@@ -21,7 +21,7 @@ func PartyParse (
         Common: common,
         RoleParameter: make(map[string]interface{}),
       },
-      RoleDag: make(map[string]form.Kv),
+      RoleDag: make(map[string]form.Task2Dag),
     }
     for _, r := range *roles {
       if f.RoleDag[r] == nil {

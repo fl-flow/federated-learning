@@ -1,6 +1,8 @@
 package jobcontroller
 
 import (
+  "fmt"
+  "strings"
   "reflect"
   "encoding/json"
   "fl/common/error"
@@ -31,7 +33,11 @@ func FederationParse(f form.JobCreateRawConf, partyMap map[string]([]string)) (D
           }
     }
   }
-  return buildDagConf(f, partyMap), nil
+  df, e := buildDagConf(f, partyMap)
+  if e != nil {
+    return dagConf, e
+  }
+  return df, nil
 }
 
 
@@ -65,7 +71,7 @@ func getRoles(roless []reflect.Value) ([]string, *error.Error) {
 }
 
 
-func buildDagConf(f form.JobCreateRawConf, partyMap map[string]([]string)) DagConf {
+func buildDagConf(f form.JobCreateRawConf, partyMap map[string]([]string)) (DagConf, *error.Error) {
   var common form.CommonParameter = f.Parameter.Common
   common.PartyMap = partyMap
   commonByte, _ := json.Marshal(common)
@@ -75,9 +81,91 @@ func buildDagConf(f form.JobCreateRawConf, partyMap map[string]([]string)) DagCo
     RoleParameter[role]["tasks"] = v
     RoleParameter[role]["common"] = string(commonByte)
   }
+  d, e := transferRoleDag(f.RoleDag)
+  if e != nil {
+    return DagConf{}, e
+  }
   return DagConf {
     Name: f.Name,
-    Dag: f.RoleDag,
+    Dag: d,
     Parameter: RoleParameter,
+  }, nil
+}
+
+
+func buildInputTag(taskAndTag string, task2Dag form.Task2Dag, type_ string) (string, *error.Error) {
+  rets := strings.Split(taskAndTag, ".")
+  if (len(rets) != 2){
+    return "", &error.Error{
+        Code: 101030, // TODO:
+        Hits: taskAndTag,
+    }
   }
+  task, tag := rets[0], rets[1]
+  var output []string
+  if type_ == "data" {
+    output = task2Dag[task].Output.Data
+  } else if type_ == "model" {
+    output = task2Dag[task].Output.Model
+  } else {
+    return "", &error.Error{
+        Code: 101030, // TODO:
+        Hits: taskAndTag,
+    }
+  }
+  index := -1
+  for i, outputTag := range output {
+    if outputTag == tag {
+      index = i
+    }
+  }
+  if index == -1 {
+    return "", &error.Error{
+        Code: 101030, // TODO:
+        Hits: taskAndTag,
+    }
+  }
+  return fmt.Sprintf("%v.%v:%v", task, type_, index), nil
+}
+
+
+func transferRoleDag(role2task2Dag map[string]form.Task2Dag) (Role2Task2TaskConf, *error.Error) {
+  fmt.Println(role2task2Dag, "zzzzz")
+  role2Task2TaskConf := make(Role2Task2TaskConf)
+  for role, task2Dag := range role2task2Dag {
+    role2Task2TaskConf[role] = make(Task2TaskConf)
+    for t, taskConf := range task2Dag {
+      var inputs []string
+      for _, inputData := range taskConf.Input.Data {
+        in, e := buildInputTag(inputData, task2Dag, "data")
+        if e != nil {
+          return role2Task2TaskConf, e
+        }
+        inputs = append(
+          inputs,
+          in,
+        )
+      }
+      for _, inputData := range taskConf.Input.Model {
+        in_, err := buildInputTag(inputData, task2Dag, "model")
+        if err != nil {
+          return role2Task2TaskConf, err
+        }
+        inputs = append(
+          inputs,
+          in_,
+        )
+      }
+      role2Task2TaskConf[role][t] = TaskConf {
+        Input: inputs,
+        Output: []string {
+          "data",
+          "model",
+        },
+        Cmd: taskConf.Cmd,
+        ValidateCmd: taskConf.ValidateCmd,
+      }
+    }
+  }
+  return role2Task2TaskConf, nil
 }

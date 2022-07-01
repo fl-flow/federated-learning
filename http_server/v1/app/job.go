@@ -16,11 +16,11 @@ import (
 
 
 func JobSubmit(context *gin.Context) {
-  fmt.Println("asdasd")
   var f form.JobForm
   if ok := mixin.CheckJSON(context, &f); !ok {
     return
   }
+  fmt.Println("f", f)
   token, er := jobcontroller.JobSubmit(f)
   mixin.CommonResponse(context, token, er)
 }
