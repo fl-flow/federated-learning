@@ -25,4 +25,6 @@ type DagConf struct {
   Name          string              `json:"name"`
   Dag           Role2Task2TaskConf  `json:"dag"`
   Parameter     interface {}        `json:"parameter"`
+  ID            uint                `json:"id"`
+  NotifyUrl     string              `json:"notify_url"`
 }

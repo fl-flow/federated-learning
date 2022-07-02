@@ -1,19 +1,21 @@
 package jobcontroller
 
 import (
+  "fmt"
   "sync"
   "encoding/json"
   "gorm.io/datatypes"
   dagModel "github.com/fl-flow/dag-scheduler/common/db/model"
   "github.com/fl-flow/dag-scheduler/dag_scheduler_client"
 
+
+  "fl/etc"
   "fl/common/db"
   "fl/common/error"
   "fl/common/db/model"
-  "fl/http_server/v1/form"
+  "fl/util/id_generator"
+  "fl/http_server/v1/job/form"
 )
-
-const LocalParty = "127.0.0.1:8443"
 
 
 func JobCreate(f form.JobForm) (dagModel.Job, *error.Error) {
@@ -30,8 +32,9 @@ func JobCreate(f form.JobForm) (dagModel.Job, *error.Error) {
     dagConfMap[party_id] = dagConf
   }
   // TODO: LocalParty in dagConfMap
-  dagConf := dagConfMap[LocalParty]
-
+  dagConf := dagConfMap[etc.LocalParty]
+  dagConf.ID = f.ID
+  dagConf.NotifyUrl = fmt.Sprintf("%v:%v/api/v1/job/notify/", etc.LocalSchemaIP, etc.PORT)
   job, clientE := dagschedulerclient.CreateJob(dagConf)
   if clientE != nil {
     errorMessage := clientE.Message()
@@ -47,6 +50,8 @@ func JobCreate(f form.JobForm) (dagModel.Job, *error.Error) {
   j := model.Job{
     Name: f.Name,
     Conf: datatypes.JSON(jByte),
+    Status: model.JobInit,
+    ID: f.ID,
   }
   db.DataBase.Create(&j)
   var insertingTasks []model.Task
@@ -58,6 +63,7 @@ func JobCreate(f form.JobForm) (dagModel.Job, *error.Error) {
           Party: party_id,
           Role: role,
           Name: t,
+          Status: model.TaskInit,
         })
       }
     }
@@ -81,6 +87,9 @@ func JobSubmit(f form.JobForm) (form.JobForm, *error.Error) {
   }
   wait := &sync.WaitGroup{}
   wait.Add(len(party2CreateForm))
+  if f.ID == uint(0) {
+    f.ID = idgenerator.NewID()
+  }
   for party_id, _ := range party2CreateForm {
     go TransferJob(party_id, f, wait)
   }

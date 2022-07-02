@@ -1,18 +1,21 @@
 package model
 
-// import (
-// 	"encoding/json"
-// 	"database/sql/driver"
-// )
-//
-//
-// type ConfType	interface{}
-//
-// func (c ConfType) Value() (driver.Value, error) {
-// 	b, err := json.Marshal(c)
-// 	return string(b), err
-// }
-//
-// func (c *ConfType) Scan(src any) error {
-// 	return json.Unmarshal(([]byte)(src.(string)), c)
-// }
+import (
+	"database/sql/driver"
+)
+
+
+type JobStatusType int
+
+const (
+	JobInit			JobStatusType = 1
+)
+
+func (c *JobStatusType) Scan(value interface{}) error {
+	*c = JobStatusType(value.(int64))
+  return nil
+}
+
+func (c JobStatusType) Value() (driver.Value, error) {
+  return int64(c), nil
+}

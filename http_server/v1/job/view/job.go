@@ -1,4 +1,4 @@
-package app
+package view
 
 import (
   "fmt"
@@ -7,10 +7,10 @@ import (
 
   "fl/common/db"
   "fl/common/db/model"
-  "fl/http_server/v1/form"
-  "fl/http_server/http/response"
   "fl/http_server/http/mixin"
-  "fl/http_server/v1/controller/job"
+  "fl/http_server/v1/job/form"
+  "fl/http_server/http/response"
+  "fl/http_server/v1/job/controller"
   "fl/http_server/http/reverse_proxy"
 )
 

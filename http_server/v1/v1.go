@@ -4,7 +4,7 @@ import (
   "net/http"
 	"github.com/gin-gonic/gin"
 
-  "fl/http_server/v1/app"
+  "fl/http_server/v1/job"
 )
 
 
@@ -13,7 +13,5 @@ func RegisterRouter(Router *gin.RouterGroup)  {
     c.String(http.StatusOK, "1.0.0")
   })
 
-  Router.POST("/job/submit/", app.JobSubmit)
-  Router.POST("/job/", app.JobCreate)
-	Router.GET("/job/", app.JobList)
+  job.RegisterRouter(Router.Group("/job"))
 }

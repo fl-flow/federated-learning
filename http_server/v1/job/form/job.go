@@ -50,4 +50,20 @@ type JobCreateRawConf struct {
 type JobForm struct {
   JobCreateRawConf
   PartyMap        map[string]([]string) `json:"party_map" binding:"required"`
+  ID              uint                  `json:"id"`
+}
+
+
+type Notify struct {
+  Status  int           `json:"status"`
+  Type    string        `json:"type"`
+  ID      uint          `json:"id"`
+  Extra   interface{}   `json:"extra"`
+}
+
+
+type TaskNotify struct {
+  JobID     uint      `json:"job_id"`
+  Group     string    `json:"group"`
+  Task      string    `json:"task"`
 }

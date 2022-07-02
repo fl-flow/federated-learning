@@ -7,7 +7,7 @@ import (
 
 
 type BaseModel struct {
-  ID        uint        `gorm:"primarykey"`
+  ID        uint        `gorm:"primarykey;type:bigint auto_increment"`
   CreatedAt time.Time   `gorm:"autoCreateTime"`
 	UpdatedAt time.Time   `gorm:"autoUpdateTime"`
 }
@@ -15,32 +15,21 @@ type BaseModel struct {
 
 type Job struct {
   BaseModel
+  ID              uint                `gorm:"primarykey;type:bigint auto_increment"`
   Name            string
   Conf            datatypes.JSON      `gorm:"type:json"`
   Tasks           []Task
-}
-
-
-type JobStatus struct {
-  BaseModel
-  Job             Job
-  Status          int
+  Status          JobStatusType       `gorm:"type:int"`
 }
 
 
 type Task struct {
   BaseModel
-  ID              uint          `gorm:"primarykey"`
-  JobID           uint
+  ID              uint            `gorm:"primarykey;type:bigint auto_increment"`
+  JobID           uint            `gorm:"type:bigint"`
   Job             Job
+  Status          TaskStatusType  `gorm:"type:int"`
   Party           string
   Role            string
   Name            string
-}
-
-
-type TaskStatus struct {
-  BaseModel
-  Task            Task
-  Status          TaskStatusType    `gorm:"type:int"`
 }

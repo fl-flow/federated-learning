@@ -6,12 +6,13 @@ import (
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
+	"fl/etc"
 	_ "fl/docs"
 	"fl/http_server/v1"
 	"fl/http_server/http/middleware"
 )
 
-func Run(ip string, port int) {
+func Run() {
 	ginApp := gin.Default()
 
 	ginApp.Use(middleware.AuthMiddleware)
@@ -20,5 +21,5 @@ func Run(ip string, port int) {
 
 	v1.RegisterRouter(ginApp.Group("/api/v1"))
 
-	ginApp.Run(fmt.Sprintf("%v:%d", ip, port))
+	ginApp.Run(fmt.Sprintf("%v:%d", etc.IP, etc.PORT))
 }
