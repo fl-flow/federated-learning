@@ -54,15 +54,15 @@ type JobForm struct {
 }
 
 
-type Notify struct {
-  Status  int           `json:"status"`
-  Type    string        `json:"type"`
-  ID      uint          `json:"id"`
-  Extra   interface{}   `json:"extra"`
+type TaskNotify struct {
+  Status  int             `json:"status"`
+  Type    string          `json:"type"`
+  ID      uint            `json:"id"`
+  Extra   TaskNotifyExtra `json:"extra"`
 }
 
 
-type TaskNotify struct {
+type TaskNotifyExtra struct {
   JobID     uint      `json:"job_id"`
   Group     string    `json:"group"`
   Task      string    `json:"task"`

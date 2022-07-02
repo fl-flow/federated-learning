@@ -6,7 +6,6 @@ import (
 
 
 func NewID() uint {
-  // timeUnixNano := time.Now().UnixNano()
-  timeUnixNano := time.Now().Unix()
+  timeUnixNano := time.Now().UnixNano()
   return uint(timeUnixNano)
 }
