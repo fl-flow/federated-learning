@@ -34,7 +34,8 @@ func JobCreate(f form.JobForm) (dagModel.Job, *error.Error) {
   // TODO: LocalParty in dagConfMap
   dagConf := dagConfMap[etc.LocalParty]
   dagConf.ID = f.ID
-  dagConf.NotifyUrl = fmt.Sprintf("%v:%v/api/v1/job/notify/", etc.LocalSchemaIP, etc.PORT)
+  dagConf.NotifyUrl = fmt.Sprintf("%v:%v/api/v1/job/notify/task/", etc.LocalSchemaIP, etc.PORT)
+  dagConf.JobNotifyUrl = fmt.Sprintf("%v:%v/api/v1/job/notify/job/", etc.LocalSchemaIP, etc.PORT)
   job, clientE := dagschedulerclient.CreateJob(dagConf)
   if clientE != nil {
     errorMessage := clientE.Message()

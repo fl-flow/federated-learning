@@ -58,12 +58,16 @@ type TaskNotify struct {
   Status  int             `json:"status"`
   Type    string          `json:"type"`
   ID      uint            `json:"id"`
-  Extra   TaskNotifyExtra `json:"extra"`
+  Extra   struct {
+    JobID     uint      `json:"job_id"`
+    Group     string    `json:"group"`
+    Task      string    `json:"task"`
+  } `json:"extra"`
 }
 
 
-type TaskNotifyExtra struct {
-  JobID     uint      `json:"job_id"`
-  Group     string    `json:"group"`
-  Task      string    `json:"task"`
+type JobNotify struct {
+  Status  int             `json:"status"`
+  Type    string          `json:"type"`
+  ID      uint            `json:"id"`
 }

@@ -12,7 +12,7 @@ import (
 )
 
 
-func Notify(context *gin.Context) {
+func NotifyTask(context *gin.Context) {
   var f form.TaskNotify
   if ok := mixin.CheckJSON(context, &f); !ok {
     return
@@ -27,8 +27,22 @@ func Notify(context *gin.Context) {
     ).Updates(model.Task{
       Status: model.TaskStatusType(f.Status),
     })
-
-    fmt.Println("notify task data // TODO: ", f.Extra)
   }
-  fmt.Println("notify data // TODO: ", f)
+}
+
+
+func NotifyJob(context *gin.Context) {
+  var f form.JobNotify
+  if ok := mixin.CheckJSON(context, &f); !ok {
+    fmt.Println(f, "asdasdasd")
+    return
+  }
+  if f.Type == "job" {
+    db.DataBase.Debug().Where(
+      "id=?",
+      f.ID,
+    ).Updates(model.Job{
+      Status: model.JobStatusType(f.Status),
+    })
+  }
 }

@@ -12,5 +12,6 @@ func RegisterRouter(Router *gin.RouterGroup)  {
   Router.POST("/", view.JobCreate)
 	Router.GET("/", view.JobList)
 
-  Router.POST("/notify/", view.Notify)
+  Router.POST("/notify/task/", view.NotifyTask)
+	Router.POST("/notify/job/", view.NotifyJob)
 }

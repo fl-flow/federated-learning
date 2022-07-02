@@ -27,4 +27,5 @@ type DagConf struct {
   Parameter     interface {}        `json:"parameter"`
   ID            uint                `json:"id"`
   NotifyUrl     string              `json:"notify_url"`
+  JobNotifyUrl  string              `json:"job_notify_url"`
 }
