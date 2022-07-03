@@ -4,6 +4,7 @@ import (
   "fmt"
   "gorm.io/gorm"
   "github.com/gin-gonic/gin"
+
   "fl/common/error"
   "fl/http_server/http/response"
 )
@@ -14,7 +15,7 @@ func List(context *gin.Context, qs *gorm.DB)(
 ) {
   var pagination PageNumberPagination
   var total int64
-  qs.Count(&total)
+  qs.Session(&gorm.Session{}).Count(&total)
   context.ShouldBindQuery(&pagination)
   size := pagination.Size
   if size <= 0 {
@@ -38,19 +39,37 @@ func ListResponse(
     total int64,
     page int,
     size int,
+    fields ...string,
 ) {
+  if len(fields) == 0 {
+    response.R(
+      context,
+      0,
+      "success",
+      map[string]interface{}{
+        "count": total,
+        "list": data,
+        "page": page,
+        "size": size,
+      },
+    )
+    return
+  }
+  responseDatas := ParseSlice(data, fields...)
   response.R(
     context,
     0,
     "success",
     map[string]interface{}{
       "count": total,
-      "list": data,
+      "list": responseDatas,
       "page": page,
       "size": size,
     },
   )
+  return
 }
+
 
 
 func CheckJSON(context *gin.Context, form any) bool {

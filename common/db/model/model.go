@@ -19,7 +19,7 @@ type Job struct {
   Name            string
   Conf            datatypes.JSON      `gorm:"type:json"`
   Tasks           []Task
-  Status          JobStatusType       `gorm:"type:int"`
+  Status          JobStatusType       `gorm:"type:tinyint"`
 }
 
 
@@ -28,7 +28,7 @@ type Task struct {
   ID              uint            `gorm:"primarykey;type:bigint auto_increment"`
   JobID           uint            `gorm:"type:bigint"`
   Job             Job
-  Status          TaskStatusType  `gorm:"type:int"`
+  Status          TaskStatusType  `gorm:"type:tinyint"`
   Party           string
   Role            string
   Name            string
