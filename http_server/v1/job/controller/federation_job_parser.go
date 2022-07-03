@@ -89,6 +89,7 @@ func buildDagConf(f form.JobCreateRawConf, partyMap map[string]([]string)) (DagC
     Name: f.Name,
     Dag: d,
     Parameter: RoleParameter,
+    WaitCmdToRun: true,
   }, nil
 }
 

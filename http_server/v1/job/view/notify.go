@@ -4,6 +4,7 @@ import (
   "fmt"
   "encoding/json"
   "github.com/gin-gonic/gin"
+  "github.com/fl-flow/dag-scheduler/dag_scheduler_client"
 
   "fl/etc"
   "fl/common/db"
@@ -93,4 +94,30 @@ func FederatedNotifyTask(context *gin.Context) {
   ).Updates(model.Task{
     Status: model.TaskStatusType(f.Status),
   })
+
+  // handle ready event, to run task
+  if model.TaskStatusType(f.Status) != model.TaskReady {
+    return
+  }
+  var tasks []model.Task
+  db.DataBase.Find(&tasks, model.Task{
+    JobID: f.JobID,
+    Role: f.Group,
+    Name: f.Task,
+    Party: f.Party,
+  })
+  run := true
+  for _, task := range tasks {
+    if task.Status != model.TaskReady {
+      run = false
+      break
+    }
+  }
+  if run {
+    dagschedulerclient.ToRunTask(map[string]interface{}{
+      "job_id": f.JobID,
+      "group": f.Group,
+      "task": f.Task,
+    })
+  }
 }
