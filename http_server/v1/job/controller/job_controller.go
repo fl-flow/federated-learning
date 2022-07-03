@@ -4,7 +4,6 @@ import (
   "fmt"
   "sync"
   "encoding/json"
-  "gorm.io/datatypes"
   dagModel "github.com/fl-flow/dag-scheduler/common/db/model"
   "github.com/fl-flow/dag-scheduler/dag_scheduler_client"
 
@@ -50,7 +49,7 @@ func JobCreate(f form.JobForm) (dagModel.Job, *error.Error) {
   jByte, _ := json.Marshal(f)
   j := model.Job{
     Name: f.Name,
-    Conf: datatypes.JSON(jByte),
+    Conf: json.RawMessage(jByte),
     Status: model.JobInit,
     ID: f.ID,
   }

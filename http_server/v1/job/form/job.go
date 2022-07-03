@@ -71,3 +71,12 @@ type JobNotify struct {
   Type    string          `json:"type"`
   ID      uint            `json:"id"`
 }
+
+
+type FederatedTaskNotify struct {
+  Status    int       `json:"status"`
+  JobID     uint      `json:"job_id"`
+  Group     string    `json:"group"`
+  Task      string    `json:"task"`
+  Party     string    `json:"party"`
+}

@@ -57,7 +57,7 @@ func JobList(context *gin.Context) {
     db.DataBase.Model(&model.Job{}),
   )
   var jobs []model.Job
-  qs.Find(&jobs)
+  qs.Preload("Tasks").Find(&jobs)
   mixin.ListResponse(
     context,
     jobs,

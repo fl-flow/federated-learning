@@ -2,7 +2,8 @@ package model
 
 import (
   "time"
-  "gorm.io/datatypes"
+  "encoding/json"
+  // "gorm.io/datatypes"
 )
 
 
@@ -17,7 +18,7 @@ type Job struct {
   BaseModel
   ID              uint                `gorm:"primarykey;type:bigint auto_increment"`
   Name            string
-  Conf            datatypes.JSON      `gorm:"type:json"`
+  Conf            json.RawMessage     `gorm:"type:json"`
   Tasks           []Task
   Status          JobStatusType       `gorm:"type:tinyint"`
 }
@@ -27,7 +28,7 @@ type Task struct {
   BaseModel
   ID              uint            `gorm:"primarykey;type:bigint auto_increment"`
   JobID           uint            `gorm:"type:bigint"`
-  Job             Job
+  Job             Job             `json:"-"`
   Status          TaskStatusType  `gorm:"type:tinyint"`
   Party           string
   Role            string

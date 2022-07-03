@@ -14,4 +14,5 @@ func RegisterRouter(Router *gin.RouterGroup)  {
 
   Router.POST("/notify/task/", view.NotifyTask)
 	Router.POST("/notify/job/", view.NotifyJob)
+	Router.POST("/notify/faderated/task/", view.FederatedNotifyTask)
 }
