@@ -24,12 +24,12 @@ type CommonParameter struct {
   Communication struct {
     Engine string `json:"engine" binding:"required"`
   } `json:"communication" binding:"required"`
-  Storage struct {
-    Engine string `json:"engine" binding:"required"`
-  } `json:"storage" binding:"required"`
-  Computing struct {
-    Engine string `json:"engine" binding:"required"`
-  } `json:"computing" binding:"required"`
+  // Storage struct {
+  //   Engine string `json:"engine" binding:"required"`
+  // } `json:"storage" binding:"required"`
+  // Computing struct {
+  //   Engine string `json:"engine" binding:"required"`
+  // } `json:"computing" binding:"required"`
   PartyMap map[string]([]string) `json:"party_map,omitempty" binding:"-"`
 }
 
