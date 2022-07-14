@@ -9,8 +9,10 @@ import (
 
 func RegisterRouter(Router *gin.RouterGroup)  {
   Router.POST("/submit/", view.JobSubmit)
-  Router.POST("/", view.JobCreate)
+	Router.POST("/", view.JobCreate)
 	Router.GET("/", view.JobList)
+	Router.POST("/federation/cancel/", view.JobFederationCancelView)
+	Router.POST("/cancel/", view.JobCancelView)
 
   Router.POST("/notify/task/", view.NotifyTask)
 	Router.POST("/notify/job/", view.NotifyJob)

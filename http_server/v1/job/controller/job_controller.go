@@ -91,7 +91,7 @@ func JobSubmit(f form.JobForm) (form.JobForm, *error.Error) {
     f.ID = idgenerator.NewID()
   }
   for party_id, _ := range party2CreateForm {
-    go TransferJob(party_id, f, wait)
+    go TransferJob(party_id, "/api/v1/job/", f, wait)
   }
   wait.Wait()
   return f, nil

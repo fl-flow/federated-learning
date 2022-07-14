@@ -14,9 +14,9 @@ import (
 )
 
 
-func TransferJob(ipAndPort string, f interface{}, w *sync.WaitGroup) bool {
+func TransferJob(ipAndPort string, uri string, f interface{}, w *sync.WaitGroup) bool {
   defer w.Done()
-  url := fmt.Sprintf("http://%s%s", ipAndPort, "/api/v1/job/")
+  url := fmt.Sprintf("http://%s%s", ipAndPort, uri)
   b, e := json.Marshal(f)
   if e != nil {
 		log.Fatalf("new request to '%s' failed: %v\n", url, e)

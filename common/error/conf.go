@@ -18,4 +18,6 @@ var Conf = map[int]string {
   102025: "http api error; job.submit parameter party error; data required",
   102030: "http api error; job.submit parameter party error; party is not existed",
   102050: "http api error; job.submit transfer remote error",
+
+  103010: "http api error; job.cancel job is not existed",
 }
