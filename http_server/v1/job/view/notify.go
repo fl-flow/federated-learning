@@ -37,29 +37,44 @@ func NotifyTask(context *gin.Context) {
     var jobForm form.JobForm
     json.Unmarshal(j.Conf, &jobForm)
 
-    for _, parties := range jobForm.PartyMap { // duplicate send
-      for _, partyIpPort := range parties {
-          b, _ := json.Marshal(
-            form.FederatedTaskNotify{
-              Status: f.Status,
-              JobID: f.Extra.JobID,
-              Group: f.Extra.Group,
-              Task: f.Extra.Task,
-              Party: etc.LocalParty,
-            },
-          )
-          go func () {
-            requests.Post(
-              fmt.Sprintf(
-                "http://%v/api/v1/job/notify/faderated/task/",
-                partyIpPort,
-              ),
-              b,
-              map[string]string{},
-            )
-            }()
+    var partyList []string
+    for _, parties := range jobForm.PartyMap {
+      for _, partyIpPort := range parties{
+        insert := true
+        for _, i := range partyList {
+          if i == partyIpPort {
+            insert = false
+            break
+          }
+        }
+        if insert {
+          partyList = append(partyList, partyIpPort)
+        }
       }
     }
+    // for _, parties := range jobForm.PartyMap { // duplicate send
+    for _, partyIpPort := range partyList {
+        b, _ := json.Marshal(
+          form.FederatedTaskNotify{
+            Status: f.Status,
+            JobID: f.Extra.JobID,
+            Group: f.Extra.Group,
+            Task: f.Extra.Task,
+            Party: etc.LocalParty,
+          },
+        )
+        go func () {
+          requests.Post(
+            fmt.Sprintf(
+              "http://%v/api/v1/job/notify/faderated/task/",
+              partyIpPort,
+            ),
+            b,
+            map[string]string{},
+          )
+          }()
+    }
+    // }
   }
 }
 
@@ -99,6 +114,10 @@ func FederatedNotifyTask(context *gin.Context) {
   if model.TaskStatusType(f.Status) != model.TaskReady {
     return
   }
+  fmt.Println(f, "fffffff")
+  if f.Party != etc.LocalParty {
+    return
+  }
   var tasks []model.Task
   db.DataBase.Find(&tasks, model.Task{
     JobID: f.JobID,
@@ -113,6 +132,7 @@ func FederatedNotifyTask(context *gin.Context) {
       break
     }
   }
+  fmt.Println(run, f, "fffffff")
   if run {
     dagschedulerclient.ToRunTask(map[string]interface{}{
       "job_id": f.JobID,
