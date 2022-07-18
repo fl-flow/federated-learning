@@ -108,6 +108,8 @@ func buildInputTag(taskAndTag string, task2Dag form.Task2Dag, type_ string) (str
     output = task2Dag[task].Output.Data
   } else if type_ == "model" {
     output = task2Dag[task].Output.Model
+  } else if type_ == "tensor" {
+    output = task2Dag[task].Output.Tensor
   } else {
     return "", &error.Error{
         Code: 101030, // TODO:
@@ -157,11 +159,22 @@ func transferRoleDag(role2task2Dag map[string]form.Task2Dag) (Role2Task2TaskConf
           in_,
         )
       }
+      for _, inputData := range taskConf.Input.Tensor {
+        in_, err := buildInputTag(inputData, task2Dag, "tensor")
+        if err != nil {
+          return role2Task2TaskConf, err
+        }
+        inputs = append(
+          inputs,
+          in_,
+        )
+      }
       role2Task2TaskConf[role][t] = TaskConf {
         Input: inputs,
         Output: []string {
           "data",
           "model",
+          "tensor",
         },
         Cmd: taskConf.Cmd,
         ValidateCmd: taskConf.ValidateCmd,

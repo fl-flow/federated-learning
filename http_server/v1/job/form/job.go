@@ -5,12 +5,14 @@ import ()
 
 type Dag struct {
   Input   struct {
-    Data  []string  `json:"data" binding:"required"`
-    Model []string  `json:"model" binding:"required"`
+    Data    []string  `json:"data" binding:"required"`
+    Tensor  []string  `json:"tensor" binding:"required"`
+    Model   []string  `json:"model" binding:"required"`
   } `json:"input" binding:"required"`
   Output   struct {
-    Data  []string  `json:"data" binding:"required"`
-    Model []string  `json:"model" binding:"required"`
+    Data    []string  `json:"data" binding:"required"`
+    Tensor  []string  `json:"tensor" binding:"required"`
+    Model   []string  `json:"model" binding:"required"`
   } `json:"output" binding:"required"`
   Cmd         []string  `json:"cmd" binding:"required"`
   ValidateCmd string    `json:"validate_cmd" binding:"required"`
